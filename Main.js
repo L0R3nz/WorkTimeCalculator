@@ -117,7 +117,7 @@ function CalculateTime(){
 		document.getElementsByClassName("leaflettoolbar")[0].children[1].id = "worktime_summary";
 	}
 	
-	document.getElementById("worktime_summary").innerHTML = stringData.HourSummary + ": ( " + getGetStringFromMinutes(resultMinutes)+" )"; ;
+	document.getElementById("worktime_summary").innerHTML = stringData.HourSummary + ": ( " + getGetStringFromMinutes(resultMinutes)+" )";
 	console.log(stringData.HourSummary + ": ( " + getGetStringFromMinutes(resultMinutes)+" )");
 	
 	if(resultMinutes < -60)
