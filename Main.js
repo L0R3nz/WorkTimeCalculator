@@ -48,7 +48,6 @@ function CalculateTime(){
 	var TableData = [];
 
 	document.querySelectorAll('[title="Czas pracy"] > div').forEach(function(item) {
-		console.log(item.parentElement);
 		var data    = item.innerText.replace(/\s+/g, '');
 		var element = {};
 		
@@ -80,7 +79,6 @@ function CalculateTime(){
 			}
 			element.leftCoord = item.parentElement.left;
 			let skipElement = false;
-			console.log(TableData.length);
 			for(let i = TableData.length - 1; i >= 0; i--) {
 				if(TableData[i].leftCoord == element.leftCoord)	{
 					if(TableData[i].Exit < element.Enter) {
@@ -141,4 +139,4 @@ function CalculateTime(){
 CalculateTime();
 
 clearInterval(handleInterval);
-//var handleInterval = setInterval(function(){CalculateTime();},1000);
+var handleInterval = setInterval(function(){CalculateTime();},1000);
