@@ -48,6 +48,9 @@ function CalculateTime(){
 	var TableData = [];
 
 	document.querySelectorAll('[title="Czas pracy"] > div').forEach(function(item) {
+		if(item.innerText.indexOf("=") > 0) {
+			item.innerText = item.innerText.substring(0, item.innerText.indexOf("="));
+		}
 		var data    = item.innerText.replace(/\s+/g, '');
 		var element = {};
 		
@@ -77,6 +80,7 @@ function CalculateTime(){
 					element.BalanceMinutes = (getMinutesFromHour(element.Exit) - getMinutesFromHour(element.Enter));
 				}
 			}
+			item.innerText = item.innerText + "=" + getGetStringFromMinutes(element.BalanceMinutes).substring(1, getGetStringFromMinutes(element.BalanceMinutes).length);
 			element.leftCoord = item.parentElement.left;
 			let skipElement = false;
 			for(let i = TableData.length - 1; i >= 0; i--) {
@@ -136,7 +140,6 @@ function CalculateTime(){
 		}
 	}
 }
-CalculateTime();
 
 clearInterval(handleInterval);
 var handleInterval = setInterval(function(){CalculateTime();},1000);
