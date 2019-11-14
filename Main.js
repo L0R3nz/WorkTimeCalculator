@@ -1,4 +1,4 @@
-var stringData = { HourSummary: "Czas pracy" };
+var stringData = { HourSummary: "Czas pracy", HourAvg: "Średnia" };
 
 function getMinutesFromHour(s)
 {
@@ -28,8 +28,6 @@ function getGetStringFromMinutes(minutes)
 	var hh = parseInt(minutes/60);
 	var mm = minutes - (hh*60);
 	
-	
-	
 	if(hh<10)
 		retval += "0"; 
 	
@@ -50,7 +48,6 @@ function CalculateTime(){
 	var TableData = [];
 
 	document.querySelectorAll('[title="Czas pracy"] > div').forEach(function(item) {
-		
 		var data    = item.innerText.replace(/\s+/g, '');
 		var element = {};
 		
@@ -72,28 +69,46 @@ function CalculateTime(){
 				if((exit == null) || (exit == ""))
 				{
 					element.Exit = new Date().toTimeString().slice(0,5);
-					element.BalanceMinutes = (getMinutesFromHour(element.Exit) - getMinutesFromHour(element.Enter)) - 480;
+					element.BalanceMinutes = (getMinutesFromHour(element.Exit) - getMinutesFromHour(element.Enter));
 				}
 				else
 				{
 					element.Exit = exit;
-					element.BalanceMinutes = (getMinutesFromHour(element.Exit) - getMinutesFromHour(element.Enter)) - 480;
+					element.BalanceMinutes = (getMinutesFromHour(element.Exit) - getMinutesFromHour(element.Enter));
 				}
 			}
-			
-			TableData.push(element);
+			element.leftCoord = item.parentElement.left;
+			let skipElement = false;
+			for(let i = TableData.length - 1; i >= 0; i--) {
+				if(TableData[i].leftCoord == element.leftCoord)	{
+					if(TableData[i].Exit < element.Enter) {
+						TableData[i].BalanceMinutes += element.BalanceMinutes;
+						skipElement = true;
+					}
+					break;
+				}
+			}
+			if(skipElement == false) {
+				TableData.push(element);
+			}
 		}
 	});
 	
 	var resultMinutes = 0;
+	var avg = 0;
+	var divider = 0;
 
-	TableData.forEach(function(element) 
-	{
+	TableData.forEach(function(element) {
 		if(element.BalanceMinutes != null)
 		{
+			divider++;
 			resultMinutes  = resultMinutes + element.BalanceMinutes;
 		}
 	});
+	
+	console.log(divider);
+	avg = resultMinutes / divider;
+	resultMinutes -= 480*divider;
 	
 	if(document.getElementById("worktime_summary") == null)
 	{
@@ -125,4 +140,3 @@ CalculateTime();
 
 clearInterval(handleInterval);
 var handleInterval = setInterval(function(){CalculateTime();},1000);
-
