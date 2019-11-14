@@ -141,5 +141,7 @@ function CalculateTime(){
 	}
 }
 
+CalculateTime();
+
 clearInterval(handleInterval);
 var handleInterval = setInterval(function(){CalculateTime();},1000);
