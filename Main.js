@@ -81,7 +81,7 @@ function CalculateTime(){
 				}
 			}
 			item.innerText = item.innerText + "=" + getGetStringFromMinutes(element.BalanceMinutes).substring(1, getGetStringFromMinutes(element.BalanceMinutes).length);
-			element.leftCoord = item.parentElement.left;
+			element.leftCoord = item.parentElement.offsetLeft;
 			let skipElement = false;
 			for(let i = TableData.length - 1; i >= 0; i--) {
 				if(TableData[i].leftCoord == element.leftCoord)	{
