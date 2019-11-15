@@ -1,7 +1,28 @@
-var stringData = {
-    HourSummary: "Czas pracy",
-    HourAvg: "Średnia"
-};
+var stringData = [{
+        Language: "pl",
+        HourSummary: "Czas pracy",
+        HourAvg: "Średnia"
+    },
+    {
+        Language: "en",
+        HourSummary: "Work time",
+        HourAvg: "Average"
+    },
+];
+
+function getLanguage() {
+    var match = document.cookie.match(new RegExp('(^| )SysLanguage=([^;]+)'));
+
+    if (match) {
+        return match[2];
+    } else {
+        return "en"
+    }
+}
+
+function getStringValue() {
+    return stringData.find(element => element.Language == getLanguage());
+}
 
 function getMinutesFromHour(s) {
     if (s == null)
@@ -45,7 +66,7 @@ function CalculateTime() {
 
     var TableData = [];
 
-    document.querySelectorAll('[title="Czas pracy"] > div').forEach(function(item) {
+    document.querySelectorAll('[title="'+getStringValue().HourSummary+'"] > div').forEach(function(item) {
         if (item.innerText.indexOf("=") > 0) {
             item.innerText = item.innerText.substring(0, item.innerText.indexOf("="));
         }
@@ -100,7 +121,6 @@ function CalculateTime() {
         }
     });
 
-    console.log(divider);
     avg = resultMinutes / divider;
     resultMinutes -= 480 * divider;
 
@@ -110,8 +130,8 @@ function CalculateTime() {
         document.getElementsByClassName("leaflettoolbar")[0].children[1].id = "worktime_summary";
     }
 
-    document.getElementById("worktime_summary").innerHTML = stringData.HourSummary + ": ( " + getGetStringFromMinutes(resultMinutes) + " )";
-    console.log(stringData.HourSummary + ": ( " + getGetStringFromMinutes(resultMinutes) + " )");
+    document.getElementById("worktime_summary").innerHTML = getStringValue().HourSummary + ": ( " + getGetStringFromMinutes(resultMinutes) + " )";
+    console.log(getStringValue().HourSummary + ": ( " + getGetStringFromMinutes(resultMinutes) + " )");
 
     if (resultMinutes < -60) {
         document.getElementById("worktime_summary").style.color = "red";
