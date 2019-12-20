@@ -14,6 +14,8 @@
 ``` 
 javascript:$.getScript("https://cdn.jsdelivr.net/gh/L0R3nz/WorkTimeCalculator@master/Main.js")
 ```
+![Bookmark](./Bookmark.PNG)
+
 ## How To Use
 1. Login into ADP system
 2. Navigate to Working Hours and click bookmark created in step 2
