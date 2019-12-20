@@ -12,7 +12,7 @@
 2. Create new bookmark
 3. Into URL address paste following data
 ``` 
-javascript:$.getScript("https://cdn.jsdelivr.net/gh/L0R3nz/WorkTimeCalculator/Main.js")
+javascript:$.getScript("https://cdn.jsdelivr.net/gh/L0R3nz/WorkTimeCalculator@master/Main.js")
 ```
 ## How To Use
 1. Login into ADP system
