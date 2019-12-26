@@ -217,6 +217,39 @@ let getDaysList = () => {
     return daysList
 }
 
+let getDaysListFixed = () => {
+
+    let daysListFixed = [];
+
+    getDaysList().forEach((item) => {
+
+        //Fix Entry Issue
+        // 08:00 - 08:00
+        //       - 16:00
+        if(item.EntriesList.length == 2)
+        {
+            let firstElement = item.EntriesList[0];
+            let lastElement = item.EntriesList[item.EntriesList.length - 1];
+
+            if((firstElement.EnterMinutes !== null) && 
+               (firstElement.ExitMinutes !== null) && 
+               (firstElement.ExitMinutes - firstElement.EnterMinutes == 0) &&
+               (lastElement.EnterMinutes === null) && 
+               (lastElement.ExitMinutes !== null))
+            {
+                let val = firstElement.value.split('-')[1] + "-" + lastElement.value.split('-')[1];
+                lastElement.value = val;
+                lastElement.EnterMinutes = firstElement.ExitMinutes;
+                lastElement.IsModified = true;
+            }
+        }
+
+        daysListFixed.push(item)
+    });
+
+    return daysListFixed;
+}
+
 
 
 let calculateMinutes = (day, IsNormalized = true) => {
@@ -255,7 +288,7 @@ let calculateMinutes = (day, IsNormalized = true) => {
 let CalculateTime = () => {
 
     let calendarDays = [];
-    getDaysList().filter(item => item.EntriesList.length > 0).forEach((day) => {
+    getDaysListFixed().filter(item => item.EntriesList.length > 0).forEach((day) => {
         
         let item = {};
         item.name = day.DataString;
