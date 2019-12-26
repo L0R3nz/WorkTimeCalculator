@@ -2,7 +2,7 @@
 //--- Settings
 //--------------------------------------
 
-var stringData = [{
+let stringData = [{
     Language: "pl",
     HourSummary: "Czas wg delty",
     HourSummaryAll: "Czas w biurze",
@@ -17,6 +17,8 @@ var stringData = [{
     HTML_HourElement: "Work time",
 },
 ];
+
+let Version = "Ver 1.0.1"
 
 //--------------------------------------
 //--- Basic functions
@@ -317,7 +319,7 @@ let CalculateTime = () => {
 
 
     let text = getStringValue().HourSummary + ": ( " + getGetStringFromMinutes(Balanse.Minutes) + " )  "+ getStringValue().HourSummaryAll +": "+ getGetStringFromMinutes(Balanse.AllMinutes);
-    document.getElementById("worktime_summary").innerHTML =  text;
+    document.getElementById("worktime_summary").innerHTML =  text + "     " + Version;
     console.log(text);
 
 
