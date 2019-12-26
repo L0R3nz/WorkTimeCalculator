@@ -319,7 +319,7 @@ let CalculateTime = () => {
 
 
     let text = getStringValue().HourSummary + ": ( " + getGetStringFromMinutes(Balanse.Minutes) + " )  "+ getStringValue().HourSummaryAll +": "+ getGetStringFromMinutes(Balanse.AllMinutes);
-    document.getElementById("worktime_summary").innerHTML =  text + "     " + Version;
+    document.getElementById("worktime_summary").innerHTML =  text + " / [ " + Version + " ]";
     console.log(text);
 
 
