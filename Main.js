@@ -18,7 +18,7 @@ let stringData = [{
 },
 ];
 
-let Version = "Ver 1.0.1"
+let Version = "Ver 1.0.2"
 
 //--------------------------------------
 //--- Basic functions
@@ -225,14 +225,15 @@ let getDaysListFixed = () => {
 
     getDaysList().forEach((item) => {
 
-        //Fix Entry Issue
-        // 08:00 - 08:00
-        //       - 16:00
+        
         if(item.EntriesList.length == 2)
         {
             let firstElement = item.EntriesList[0];
             let lastElement = item.EntriesList[item.EntriesList.length - 1];
 
+            //Fix Entry Issue
+            // 08:00 - 08:00
+            //       - 16:00
             if((firstElement.EnterMinutes !== null) && 
                (firstElement.ExitMinutes !== null) && 
                (firstElement.ExitMinutes - firstElement.EnterMinutes == 0) &&
@@ -243,6 +244,20 @@ let getDaysListFixed = () => {
                 lastElement.value = val;
                 lastElement.EnterMinutes = firstElement.ExitMinutes;
                 lastElement.IsModified = true;
+            }
+
+            //Fix Entry Issue
+            // 08:00 - 
+            // 16:00 - 16:01
+            if((firstElement.EnterMinutes !== null) && 
+            (firstElement.ExitMinutes === null) && 
+            (lastElement.EnterMinutes !== null) && 
+            (lastElement.ExitMinutes !== null))
+            {
+                let val = firstElement.value.split('-')[0] + "-" + lastElement.value.split('-')[0];
+                firstElement.value = val;
+                firstElement.ExitMinutes = lastElement.EnterMinutes;
+                firstElement.IsModified = true;
             }
         }
 
