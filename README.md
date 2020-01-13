@@ -1,4 +1,4 @@
-# WorkTimeCalculator 1.0.0
+# WorkTimeCalculator 1.0.1
 
 
 ## List Of Features
@@ -12,7 +12,7 @@
 2. Create new bookmark
 3. Into URL address paste following data
 ``` 
-javascript:$.getScript("https://cdn.jsdelivr.net/gh/L0R3nz/WorkTimeCalculator@master/Main.js")
+javascript:$.getScript("https://cdn.jsdelivr.net/gh/L0R3nz/WorkTimeCalculator@latest/Main.js")
 ```
 ![Bookmark](./Bookmark.PNG)
 

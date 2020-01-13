@@ -317,12 +317,9 @@ let CalculateTime = () => {
         document.getElementsByClassName("leaflettoolbar")[0].children[1].id = "worktime_summary";
     }
 
-
     let text = getStringValue().HourSummary + ": ( " + getGetStringFromMinutes(Balanse.Minutes) + " )  "+ getStringValue().HourSummaryAll +": "+ getGetStringFromMinutes(Balanse.AllMinutes);
-    document.getElementById("worktime_summary").innerHTML =  text + "     " + Version;
+    document.getElementById("worktime_summary").innerHTML =  text + " / [ " + Version + " ]";
     console.log(text);
-
-
 
     return Balanse;
 }
