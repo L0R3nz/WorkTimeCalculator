@@ -6,6 +6,8 @@ let stringData = [{
     Language: "pl",
     HourSummary: "Czas wg delty",
     HourSummaryAll: "Czas w biurze",
+    btnSwitch_Orginal: "Orginalne dane",
+    btnSwitch_Replaced: "Obliczenia",
     //-------------------------------
     HTML_HourElement: "Czas pracy",
 },
@@ -13,13 +15,15 @@ let stringData = [{
     Language: "en",
     HourSummary: "Time by delta",
     HourSummaryAll: "Overall time",
+    btnSwitch_Orginal: "Orginal data",
+    btnSwitch_Replaced: "Calculations",
     //-------------------------------
     HTML_HourElement: "Work time",
 },
 ];
 
-let Version = "Ver 1.0.2"
-
+let Version = "Ver 1.0.3"
+let ShowReplacedData = true;
 //--------------------------------------
 //--- Basic functions
 //--------------------------------------
@@ -261,6 +265,21 @@ let getDaysListFixed = () => {
             }
         }
 
+        //today
+        if(item.EntriesList.length > 0)
+        {
+            let element = item.EntriesList[item.EntriesList.length - 1];
+            if(element.ExitMinutes === null)
+            {
+                let date = new Date();
+
+                let hourString = String(date.getHours()).padStart(2, 0) + ":" + String(date.getMinutes()).padStart(2, 0);
+
+                element.value = element.value.split('-')[0] + "-" + hourString;
+                element.ExitMinutes = parseInt((date.getHours() *60) + date.getMinutes());
+            }
+        }
+
         daysListFixed.push(item)
     });
 
@@ -276,12 +295,6 @@ let calculateMinutes = (day, IsNormalized = true) => {
 
         let record_enter = record.EnterMinutes;
         let record_exit  = record.ExitMinutes;
-
-        //TODO change logic to have independent function
-        if(record_exit === null) {
-            let date = new Date();
-            record_exit = parseInt((date.getHours() *60) + date.getMinutes());
-        }
 
         if(IsNormalized == true)
         {
@@ -302,38 +315,119 @@ let calculateMinutes = (day, IsNormalized = true) => {
 
 
 
+let createElement = (Handler, Location, Data) => {
+
+//<div class="wstext" style="white-space: pre; text-align: center; color: rgb(0, 0, 0); font-family: Calibri; font-weight: bold; font-size: 15px; line-height: 15px; left: 2px; width: 157px; top: 15px;">09:19 - 14:09</div>
+
+
+    let element  = document.createElement('div');
+    element.id = Handler;
+    element.style.left = (Location.Left + 1) +'px'
+    element.style.top = (Location.Top + 1) +'px'
+    element.style.width = (Location.Width - 2) +'px'
+    element.style.height = (Location.Height - 2) +'px'
+    
+    
+    element.style.backgroundColor = "rgb(145, 209, 255)";
+    element.style.display = "block";
+    element.style.position = "absolute";
+    element.style.zIndex = "11";
+    element.style.borderWidth = "1px";
+
+    let subElement  = document.createElement('div')
+    subElement.id = "Sub"+Handler;
+    subElement.style.width = (Location.Width - 2) +'px'
+    subElement.style.textAlign = "center";
+    subElement.style.fontFamily = "Calibri";
+    subElement.style.fontWeight = "bold";
+    subElement.style.fontSize = "15px";
+    subElement.style.lineHeight = "15px";
+    subElement.innerHTML = Data;
+
+    if(Location.Height < 40) {
+        subElement.style.marginTop = "3px";
+    } else {
+        subElement.style.marginTop = "15px";
+    }
+
+    document.querySelector("#work\\.\\.Worksheet\\.\\.calendarModel > div:nth-child(6) > div").appendChild(element);
+    document.querySelector("#"+Handler).appendChild(subElement)
+    
+
+    return element;
+}
+
+
+
 let CalculateTime = () => {
-
-    let calendarDays = [];
-    getDaysListFixed().filter(item => item.EntriesList.length > 0).forEach((day) => {
-        
-        let item = {};
-        item.name = day.DataString;
-        item.Minutes = calculateMinutes(day);
-        item.AllMinutes = calculateMinutes(day,false);
-
-        calendarDays.push(item);
-    });
 
     let Balanse = {
         Minutes:0,
         AllMinutes:0
     }
 
-    calendarDays.forEach((d)=>{
-        Balanse.Minutes += d.Minutes;
-        Balanse.AllMinutes += d.AllMinutes;
-    })
+    getDaysListFixed().filter(item => item.EntriesList.length > 0).forEach((day) => {
+
+        Balanse.Minutes += calculateMinutes(day);
+        Balanse.AllMinutes += calculateMinutes(day,false);
+
+        day.EntriesList.forEach((record,index) => {
+            
+            let strEntry = "Day_" + day.DataString + "_" + index;
+            let displayData = record.value + ' = ' + getGetStringFromMinutes(record.ExitMinutes - record.EnterMinutes);
+
+            if (document.getElementById(strEntry) == null) {
+                createElement(strEntry, record.Location, displayData);
+            } else {
+                document.getElementById(strEntry).firstChild.innerHTML = displayData;
+            }
+
+            if (document.getElementById(strEntry) != null) {
+                if(ShowReplacedData == true) {
+                    document.getElementById(strEntry).style.display = "block";
+                } else {
+                    document.getElementById(strEntry).style.display = "none";
+                }
+            }
+        });
+    });
 
 
     if (document.getElementById("worktime_summary") == null) {
-        document.getElementsByClassName("leaflettoolbar")[0].children[1].style.width = "500px";
+        document.getElementsByClassName("leaflettoolbar")[0].children[1].style.width = "1000px";
         document.getElementsByClassName("leaflettoolbar")[0].children[1].style.fontWeight = "bold";
         document.getElementsByClassName("leaflettoolbar")[0].children[1].id = "worktime_summary";
     }
 
+
+    if (document.getElementById("ShowData") == null) {
+        let btnHandler = document.querySelector("#\\.\\.Navigation\\.\\.Navigation > div.rcbox > div.rcbox > div > div:nth-child(2) > div > div > div");
+        
+        let btn  = document.createElement('Button');
+        btn.id = "ShowData";
+        btn.style.position = "absolute";
+        btn.style.left = "230px";
+        btn.style.top = "10px";
+        btn.style.width = "240px";
+        btn.style.height = "28px";
+        btn.style.zIndex = "11";
+        btn.innerHTML = getStringValue().btnSwitch_Orginal;
+        btn.onclick = ()=>{
+            ShowReplacedData = !ShowReplacedData;
+
+            if(ShowReplacedData == true) {
+                btn.innerHTML = getStringValue().btnSwitch_Orginal;
+            } else {
+                btn.innerHTML = getStringValue().btnSwitch_Replaced;
+            }
+
+            CalculateTime();
+        };
+        btnHandler.appendChild(btn);
+    }
+
     let text = getStringValue().HourSummary + ": ( " + getGetStringFromMinutes(Balanse.Minutes) + " )  "+ getStringValue().HourSummaryAll +": "+ getGetStringFromMinutes(Balanse.AllMinutes);
-    document.getElementById("worktime_summary").innerHTML =  text + " / [ " + Version + " ]";
+    document.getElementById("worktime_summary").innerHTML =  text + "  /  [ " + Version + " ]";
     console.log(text);
 
     return Balanse;
