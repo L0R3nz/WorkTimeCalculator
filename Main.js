@@ -229,7 +229,22 @@ let getDaysListFixed = () => {
 
     getDaysList().forEach((item) => {
 
-        
+       
+        //Fix Entry Issue
+        //       - 16:00
+        if(item.EntriesList.length == 1)
+        {
+            let element = item.EntriesList[0];
+
+            if((element.EnterMinutes === null) &&
+                (element.ExitMinutes !== null))
+            {
+                let val = "??:??-" + element.value.split('-')[1];
+                element.val 
+                element.EnterMinutes =  (element.ExitMinutes - 480);
+            }
+        }
+
         if(item.EntriesList.length == 2)
         {
             let firstElement = item.EntriesList[0];
@@ -331,7 +346,7 @@ let createElement = (Handler, Location, Data) => {
     element.style.backgroundColor = "rgb(145, 209, 255)";
     element.style.display = "block";
     element.style.position = "absolute";
-    element.style.zIndex = "11";
+    element.style.zIndex = "255";
     element.style.borderWidth = "1px";
 
     let subElement  = document.createElement('div')
@@ -410,7 +425,7 @@ let CalculateTime = () => {
         btn.style.top = "10px";
         btn.style.width = "240px";
         btn.style.height = "28px";
-        btn.style.zIndex = "11";
+        btn.style.zIndex = "255";
         btn.innerHTML = getStringValue().btnSwitch_Orginal;
         btn.onclick = ()=>{
             ShowReplacedData = !ShowReplacedData;
