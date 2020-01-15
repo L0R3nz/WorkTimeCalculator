@@ -1,7 +1,20 @@
 //--------------------------------------
-//--- Settings
+//--- Variables
 //--------------------------------------
 
+/**
+ * Current software version
+ */
+const versionString = "Ver 1.0.6"
+
+/**
+ * Variable whitch control if calculated data are visible for the user
+ */
+let showCalculationData = true;
+
+/**
+ * Object whitch contains all strings for supported languages
+ */
 let stringData = [{
     Language: "pl",
     HourSummary: "Czas wg delty",
@@ -22,12 +35,13 @@ let stringData = [{
 },
 ];
 
-let Version = "Ver 1.0.6"
-let ShowReplacedData = true;
 //--------------------------------------
 //--- Basic functions
 //--------------------------------------
 
+/**
+ * Return language used by user
+ */
 function getLanguage() {
     var match = document.cookie.match(new RegExp('(^| )SysLanguage=([^;]+)'));
 
@@ -38,19 +52,35 @@ function getLanguage() {
     }
 }
 
+/**
+ * Current language pointer
+ */
 function getStringValue() {
     return stringData.find(element => element.Language == getLanguage());
 }
 
-
+/**
+ * Return day field height
+ */
 let getDayHeight = () => {
     return 47 + 1;
 }
 
-let getMonthDays = (today) => {
-    return new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+/**
+ * Return number of days for a specific month
+ * 
+ * @param {Date} day - Date of the month
+ */
+let getMonthDays = (day) => {
+    return new Date(day.getFullYear(), day.getMonth() + 1, 0).getDate();
 }
 
+/**
+ * Return item whitch contains information about Element provided in handle
+ * 
+ * @param   {Element} handle - Element whitch provide HTML fields like Left, Top, Height and Width 
+ * @returns {Object}  item   - Contains information about object provided in handle
+ */
 let getLocationProperties = (handle) => {
   if (handle !== null) {
     let item = {};
@@ -69,8 +99,14 @@ let getLocationProperties = (handle) => {
   }
 }
 
-//TODO change this function
+/**
+ * Return string in format HH:mm with prefix +/-
+ * 
+ * @param {Number} minutes - amount of minutes
+ */
 let getGetStringFromMinutes = (minutes) => {
+   
+    //todo improve this function
     let retval = "";
 
     if (minutes < 0) {
@@ -97,12 +133,13 @@ let getGetStringFromMinutes = (minutes) => {
     return retval;
 }
 
-
-
 //--------------------------------------
 //--- Extract data functions
 //--------------------------------------
 
+/**
+ * Return array whitch contains hours for current month 
+ */
 let getAllowedHoursList = () => {
     let allowedHours = [];
     for (let entry = 5; entry < 12; entry++) {
@@ -130,7 +167,9 @@ let getAllowedHoursList = () => {
     return allowedHours;
 }
 
-
+/**
+ * Return array whitch contains deltas for current month 
+ */
 let getDeltaList = () => {
     let deltaList = [];
 
@@ -153,7 +192,9 @@ let getDeltaList = () => {
     return deltaList;
 }
 
-
+/**
+ * Return array whitch contains entries for current month
+ */
 let getWorksHoursList = () => {
     let worksHoursFound = [];
     document.querySelectorAll('[title="'+getStringValue().HTML_HourElement+'"]').forEach((handle) => {
@@ -187,6 +228,9 @@ let getWorksHoursList = () => {
     return worksHoursFound;
 }
 
+/**
+ * Return array whitch contains allowed hours, delta and entries for a specyfic day
+ */
 let getDaysList = () => {
     let daysList = [];
     let currentDate = new Date();
@@ -223,6 +267,9 @@ let getDaysList = () => {
     return daysList
 }
 
+/**
+ * Return array of days with fixed errors for entries
+ */
 let getDaysListFixed = () => {
 
     let daysListFixed = [];
@@ -300,7 +347,7 @@ let getDaysListFixed = () => {
             }
         }
 
-        //today
+        //Update current day exit time if not know 
         if(item.EntriesList.length > 0)
         {
             let element = item.EntriesList[item.EntriesList.length - 1];
@@ -321,8 +368,17 @@ let getDaysListFixed = () => {
     return daysListFixed;
 }
 
+//--------------------------------------
+//--- Main logic functions
+//--------------------------------------
 
-
+/**
+ * 
+ * Return minutes balance for a specyfic day
+ * 
+ * @param {Object}  day             - Object whitch contains all informations about day
+ * @param {Boolean} IsNormalized    - If its true we calculate minutes only inside delta
+ */
 let calculateMinutes = (day, IsNormalized = true) => {
 
     let dayBalance = 0;
@@ -349,11 +405,14 @@ let calculateMinutes = (day, IsNormalized = true) => {
 }
 
 
-
+/**
+ * Create HTML element in specyfic location with Id specyfied in Handler
+ * 
+ * @param {*} Handler   - Id value for a HTML element
+ * @param {*} Location  - Location where we create element
+ * @param {*} Data      - Information to display inside element
+ */
 let createElement = (Handler, Location, Data) => {
-
-//<div class="wstext" style="white-space: pre; text-align: center; color: rgb(0, 0, 0); font-family: Calibri; font-weight: bold; font-size: 15px; line-height: 15px; left: 2px; width: 157px; top: 15px;">09:19 - 14:09</div>
-
 
     let element  = document.createElement('div');
     element.id = Handler;
@@ -392,8 +451,9 @@ let createElement = (Handler, Location, Data) => {
     return element;
 }
 
-
-
+/**
+ * Main handler for time calculation
+ */
 let CalculateTime = () => {
 
     let Balanse = {
@@ -401,6 +461,7 @@ let CalculateTime = () => {
         AllMinutes:0
     }
 
+    //Calculate balance for each day and store in elements whitch are created
     getDaysListFixed().filter(item => item.EntriesList.length > 0).forEach((day) => {
 
         Balanse.Minutes += calculateMinutes(day);
@@ -418,7 +479,7 @@ let CalculateTime = () => {
             }
 
             if (document.getElementById(strEntry) != null) {
-                if(ShowReplacedData == true) {
+                if(showCalculationData == true) {
                     document.getElementById(strEntry).style.display = "block";
                 } else {
                     document.getElementById(strEntry).style.display = "none";
@@ -428,6 +489,7 @@ let CalculateTime = () => {
     });
 
 
+    //create hours status bar if not exist
     if (document.getElementById("worktime_summary") == null) {
         document.getElementsByClassName("leaflettoolbar")[0].children[1].style.width = "1000px";
         document.getElementsByClassName("leaflettoolbar")[0].children[1].style.fontWeight = "bold";
@@ -435,6 +497,7 @@ let CalculateTime = () => {
     }
 
 
+    //create button if not exist
     if (document.getElementById("ShowData") == null) {
         let btnHandler = document.querySelector("#\\.\\.Navigation\\.\\.Navigation > div.rcbox > div.rcbox > div > div:nth-child(2) > div > div > div");
         
@@ -447,10 +510,10 @@ let CalculateTime = () => {
         btn.style.height = "28px";
         btn.style.zIndex = "255";
         btn.innerHTML = getStringValue().btnSwitch_Orginal;
-        btn.onclick = ()=>{
-            ShowReplacedData = !ShowReplacedData;
+        btn.onclick = () => {
+            showCalculationData = !showCalculationData;
 
-            if(ShowReplacedData == true) {
+            if(showCalculationData == true) {
                 btn.innerHTML = getStringValue().btnSwitch_Orginal;
             } else {
                 btn.innerHTML = getStringValue().btnSwitch_Replaced;
@@ -461,8 +524,9 @@ let CalculateTime = () => {
         btnHandler.appendChild(btn);
     }
 
+    //Update status bar with balance
     let text = getStringValue().HourSummary + ": ( " + getGetStringFromMinutes(Balanse.Minutes) + " )  "+ getStringValue().HourSummaryAll +": "+ getGetStringFromMinutes(Balanse.AllMinutes);
-    document.getElementById("worktime_summary").innerHTML =  text + "  /  [ " + Version + " ]";
+    document.getElementById("worktime_summary").innerHTML =  text + "  /  [ " + versionString + " ]";
     console.log(text);
 
     return Balanse;
