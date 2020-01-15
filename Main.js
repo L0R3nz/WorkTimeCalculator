@@ -240,7 +240,7 @@ let getDaysListFixed = () => {
                 (element.ExitMinutes !== null))
             {
                 let val = "??:??-" + element.value.split('-')[1];
-                element.val 
+                element.value = val;
                 element.EnterMinutes =  (element.ExitMinutes - 480);
             }
         }
