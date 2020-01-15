@@ -1,4 +1,4 @@
-# WorkTimeCalculator 1.0.5
+# WorkTimeCalculator 1.0.6
 
 
 ## List Of Features
