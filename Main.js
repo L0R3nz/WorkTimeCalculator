@@ -22,7 +22,7 @@ let stringData = [{
 },
 ];
 
-let Version = "Ver 1.0.3"
+let Version = "Ver 1.0.4"
 let ShowReplacedData = true;
 //--------------------------------------
 //--- Basic functions
