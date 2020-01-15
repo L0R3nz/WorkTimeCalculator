@@ -22,7 +22,7 @@ let stringData = [{
 },
 ];
 
-let Version = "Ver 1.0.5"
+let Version = "Ver 1.0.6"
 let ShowReplacedData = true;
 //--------------------------------------
 //--- Basic functions
@@ -277,6 +277,26 @@ let getDaysListFixed = () => {
                 firstElement.value = val;
                 firstElement.ExitMinutes = lastElement.EnterMinutes;
                 firstElement.IsModified = true;
+            }
+
+
+            //Fix Entry Issue
+            // 08:00 - 
+            // 16:00 - 
+            if((firstElement.EnterMinutes !== null) && 
+            (firstElement.ExitMinutes === null) && 
+            (lastElement.EnterMinutes !== null) && 
+            (lastElement.ExitMinutes === null))
+            {
+                let val = firstElement.value.split('-')[0] + "-" + lastElement.value.split('-')[0];
+                firstElement.value = val;
+                firstElement.ExitMinutes = lastElement.EnterMinutes;
+                firstElement.IsModified = true;
+
+                val = lastElement.value.split('-')[0] + "-" + lastElement.value.split('-')[0];
+                lastElement.value = val;
+                lastElement.ExitMinutes = lastElement.EnterMinutes;
+                lastElement.IsModified = true;
             }
         }
 
