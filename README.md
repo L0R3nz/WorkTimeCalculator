@@ -1,10 +1,11 @@
-# WorkTimeCalculator 1.0.1
+# WorkTimeCalculator 1.0.3
 
 
 ## List Of Features
 - Calculate time as per deltas
 - Calculate overall time
 - Auto Update
+- Show raw and processed data
 
 
 ## How To Install
