@@ -19,7 +19,7 @@ let stringData = [{
     Language: "pl",
     HourSummary: "Czas wg delty",
     HourSummaryAll: "Czas w biurze",
-    btnSwitch_Orginal: "Orginalne dane",
+    btnSwitch_Orginal: "Oryginalne dane",
     btnSwitch_Replaced: "Obliczenia",
     //-------------------------------
     HTML_HourElement: "Czas pracy",
@@ -28,7 +28,7 @@ let stringData = [{
     Language: "en",
     HourSummary: "Time by delta",
     HourSummaryAll: "Overall time",
-    btnSwitch_Orginal: "Oryginalne data",
+    btnSwitch_Orginal: "Orginal data",
     btnSwitch_Replaced: "Calculations",
     //-------------------------------
     HTML_HourElement: "Work time",
