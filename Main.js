@@ -1,5 +1,5 @@
 //--------------------------------------
-//--- Variables
+//--- Variables and constants
 //--------------------------------------
 
 /**
@@ -28,7 +28,7 @@ let stringData = [{
     Language: "en",
     HourSummary: "Time by delta",
     HourSummaryAll: "Overall time",
-    btnSwitch_Orginal: "Orginal data",
+    btnSwitch_Orginal: "Oryginalne data",
     btnSwitch_Replaced: "Calculations",
     //-------------------------------
     HTML_HourElement: "Work time",
