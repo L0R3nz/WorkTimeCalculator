@@ -5,7 +5,7 @@
 /**
  * Current software version
  */
-const versionString = "Ver 1.0.6"
+const versionString = "Ver 1.0.7"
 
 /**
  * Variable whitch control if calculated data are visible for the user
@@ -63,7 +63,7 @@ function getStringValue() {
  * Return day field height
  */
 let getDayHeight = () => {
-    return 47 + 1;
+    return 60 + 1;
 }
 
 /**
