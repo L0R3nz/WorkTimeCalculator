@@ -1,4 +1,4 @@
-# WorkTimeCalculator 1.0.6
+# WorkTimeCalculator 1.0.8
 
 
 ## List Of Features
@@ -6,6 +6,7 @@
 - Calculate overall time
 - Auto Update
 - Show raw and processed data
+- Display Time in Title of the ADP webpage
 
 
 ## How To Install
