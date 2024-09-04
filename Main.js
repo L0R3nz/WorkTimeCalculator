@@ -5,7 +5,7 @@
 /**
  * Current software version
  */
-const versionString = "Ver 1.0.7"
+const versionString = "Ver 1.0.8"
 
 /**
  * Variable whitch control if calculated data are visible for the user
