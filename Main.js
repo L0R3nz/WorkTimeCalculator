@@ -19,6 +19,8 @@ let stringData = [{
     Language: "pl",
     HourSummary: "Czas wg delty",
     HourSummaryAll: "Czas w biurze",
+	TitleHourSummary: "Delta",
+	TitleHourSummaryAll: "Biuro",
     btnSwitch_Orginal: "Oryginalne dane",
     btnSwitch_Replaced: "Obliczenia",
     //-------------------------------
@@ -28,6 +30,8 @@ let stringData = [{
     Language: "en",
     HourSummary: "Time by delta",
     HourSummaryAll: "Overall time",
+	TitleHourSummary: "By delta",
+	TitleHourSummaryAll: "Overall",
     btnSwitch_Orginal: "Orginal data",
     btnSwitch_Replaced: "Calculations",
     //-------------------------------
@@ -527,6 +531,8 @@ let CalculateTime = () => {
     //Update status bar with balance
     let text = getStringValue().HourSummary + ": ( " + getGetStringFromMinutes(Balanse.Minutes) + " )  "+ getStringValue().HourSummaryAll +": "+ getGetStringFromMinutes(Balanse.AllMinutes);
     document.getElementById("worktime_summary").innerHTML =  text + "  /  [ " + versionString + " ]";
+	let textTitle = getStringValue().TitleHourSummary + ": " + getGetStringFromMinutes(Balanse.Minutes) + " | "+ getStringValue().TitleHourSummaryAll +": "+ getGetStringFromMinutes(Balanse.AllMinutes);
+	document.title = textTitle;
     console.log(text);
 
     return Balanse;
