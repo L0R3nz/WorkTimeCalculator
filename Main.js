@@ -104,37 +104,32 @@ let getLocationProperties = (handle) => {
 }
 
 /**
- * Return string in format HH:mm with prefix +/-
+ * Returns a time string in the format HH:mm with an optional +/- prefix.
  * 
- * @param {Number} minutes - amount of minutes
+ * @param {Number} minutes - The total number of minutes (can be negative).
+ * @param {Boolean} [removePrefix=false] - If true, removes the +/- prefix from the output.
+ * @returns {String} - A formatted string representing the time in HH:mm format, with an optional +/- prefix.
  */
-let getGetStringFromMinutes = (minutes) => {
-   
-    //todo improve this function
-    let retval = "";
-
-    if (minutes < 0) {
-        minutes = -1 * minutes;
-        retval += "-"
-    } else if (minutes > 0) {
-        retval += "+"
+const getStringFromMinutes = (minutes, removePrefix = false) => {
+    // Determine prefix if applicable
+    let prefix = "";
+    if (!removePrefix) {
+        if (minutes < 0) {
+            prefix = "-";
+            minutes = Math.abs(minutes); // Convert to positive
+        } else if (minutes > 0) {
+            prefix = "+";
+        }
     }
 
-    let hh = parseInt(minutes / 60);
-    let mm = minutes - (hh * 60);
+    // Calculate hours and minutes
+    const hh = Math.floor(minutes / 60);
+    const mm = minutes % 60;
 
-    if (hh < 10)
-        retval += "0";
+    // Format hours and minutes with leading zeros
+    const formattedTime = `${hh.toString().padStart(2, '0')}:${mm.toString().padStart(2, '0')}`;
 
-    retval += hh;
-    retval += ":";
-
-    if (mm < 10)
-        retval += "0";
-
-    retval += mm;
-
-    return retval;
+    return `${prefix}${formattedTime}`;
 }
 
 //--------------------------------------
@@ -474,7 +469,7 @@ let CalculateTime = () => {
         day.EntriesList.forEach((record,index) => {
             
             let strEntry = "Day_" + day.DataString + "_" + index;
-            let displayData = record.value + ' = ' + getGetStringFromMinutes(record.ExitMinutes - record.EnterMinutes);
+            let displayData = record.value + ' = ' + getStringFromMinutes(record.ExitMinutes - record.EnterMinutes);
 
             if (document.getElementById(strEntry) == null) {
                 createElement(strEntry, record.Location, displayData);
@@ -529,9 +524,9 @@ let CalculateTime = () => {
     }
 
     //Update status bar with balance
-    let text = getStringValue().HourSummary + ": ( " + getGetStringFromMinutes(Balanse.Minutes) + " )  "+ getStringValue().HourSummaryAll +": "+ getGetStringFromMinutes(Balanse.AllMinutes);
+    let text = getStringValue().HourSummary + ": ( " + getStringFromMinutes(Balanse.Minutes) + " )  "+ getStringValue().HourSummaryAll +": "+ getStringFromMinutes(Balanse.AllMinutes);
     document.getElementById("worktime_summary").innerHTML =  text + "  /  [ " + versionString + " ]";
-	let textTitle = getStringValue().TitleHourSummary + ":" + getGetStringFromMinutes(Balanse.Minutes) + " | "+ getStringValue().TitleHourSummaryAll +":"+ getGetStringFromMinutes(Balanse.AllMinutes);
+	let textTitle = getStringValue().TitleHourSummary + ":" + getStringFromMinutes(Balanse.Minutes) + " | "+ getStringValue().TitleHourSummaryAll +":"+ getStringFromMinutes(Balanse.AllMinutes);
 	document.title = textTitle;
     console.log(text);
 
