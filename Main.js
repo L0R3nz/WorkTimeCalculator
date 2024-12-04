@@ -41,6 +41,11 @@ let stringData = [{
 },
 ];
 
+/**
+ * Const whitch disable debug information
+ */
+const isDebugModeActive = false;
+
 //--------------------------------------
 //--- Basic functions
 //--------------------------------------
@@ -551,8 +556,11 @@ let CalculateTime = () => {
     document.getElementById("worktime_summary").innerHTML = `${text_minutes}   |   ${text_all_minutes}   |   ${versionString}`;
 	let textTitle = getStringValue().TitleHourSummary + ":" + getStringFromMinutes(Balanse.Minutes) + " | "+ getStringValue().TitleHourSummaryAll +":"+ getStringFromMinutes(Balanse.AllMinutes);
 	document.title = textTitle;
-    console.log(text_minutes);
-    console.log(text_all_minutes);
+    
+    if (isDebugModeActive) {
+        console.log(text_minutes);
+        console.log(text_all_minutes);
+    }
 
     return Balanse;
 }
