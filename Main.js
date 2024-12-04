@@ -19,6 +19,7 @@ let stringData = [{
     Language: "pl",
     HourSummary: "Czas wg delty",
     HourSummaryAll: "Czas w biurze",
+    LeaveHour:"Wyjdz o",
 	TitleHourSummary: "Delta",
 	TitleHourSummaryAll: "Biuro",
     btnSwitch_Orginal: "Oryginalne dane",
@@ -30,6 +31,7 @@ let stringData = [{
     Language: "en",
     HourSummary: "Time by delta",
     HourSummaryAll: "Overall time",
+    LeaveHour:"Leave at",
 	TitleHourSummary: "Delta",
 	TitleHourSummaryAll: "All",
     btnSwitch_Orginal: "Orginal data",
@@ -131,6 +133,19 @@ const getStringFromMinutes = (minutes, removePrefix = false) => {
 
     return `${prefix}${formattedTime}`;
 }
+
+/**
+ * Adds a specified number of minutes to the current time and returns 
+ * the total number of minutes since midnight for the updated time.
+ * 
+ * @param {Number} minutesToAdd - The number of minutes to add to the current time.
+ * @returns {Number} - Total minutes since midnight for the updated time.
+ */
+let addMinutesToCurrentTime = (minutesToAdd) => {
+    let updatedTime = new Date(Date.now() + minutesToAdd * 60000);
+    let totalMinutes = updatedTime.getHours() * 60 + updatedTime.getMinutes();
+    return totalMinutes;
+};
 
 //--------------------------------------
 //--- Extract data functions
@@ -524,11 +539,20 @@ let CalculateTime = () => {
     }
 
     //Update status bar with balance
-    let text = getStringValue().HourSummary + ": ( " + getStringFromMinutes(Balanse.Minutes) + " )  "+ getStringValue().HourSummaryAll +": "+ getStringFromMinutes(Balanse.AllMinutes);
-    document.getElementById("worktime_summary").innerHTML =  text + "  /  [ " + versionString + " ]";
+
+    let Balanse_exit = {
+        Minutes: addMinutesToCurrentTime(Balanse.Minutes * -1),
+        AllMinutes: addMinutesToCurrentTime(Balanse.AllMinutes * -1)
+    }
+
+    const str = getStringValue();
+    let text_minutes = `${str.HourSummary}: (${getStringFromMinutes(Balanse.Minutes)}) ${str.LeaveHour}: ${getStringFromMinutes(Balanse_exit.Minutes, true)}`;
+    let text_all_minutes = `${str.HourSummaryAll}: (${getStringFromMinutes(Balanse.AllMinutes)}) ${str.LeaveHour}: ${getStringFromMinutes(Balanse_exit.AllMinutes, true)}`;
+    document.getElementById("worktime_summary").innerHTML = `${text_minutes}   |   ${text_all_minutes}   |   ${versionString}`;
 	let textTitle = getStringValue().TitleHourSummary + ":" + getStringFromMinutes(Balanse.Minutes) + " | "+ getStringValue().TitleHourSummaryAll +":"+ getStringFromMinutes(Balanse.AllMinutes);
 	document.title = textTitle;
-    console.log(text);
+    console.log(text_minutes);
+    console.log(text_all_minutes);
 
     return Balanse;
 }
