@@ -5,7 +5,7 @@
 /**
  * Current software version
  */
-const versionString = "Ver 1.0.8"
+const versionString = "Ver 1.0.9"
 
 /**
  * Variable whitch control if calculated data are visible for the user
@@ -19,6 +19,7 @@ let stringData = [{
     Language: "pl",
     HourSummary: "Czas wg delty",
     HourSummaryAll: "Czas w biurze",
+    LeaveHour:"Wyjdz o",
 	TitleHourSummary: "Delta",
 	TitleHourSummaryAll: "Biuro",
     btnSwitch_Orginal: "Oryginalne dane",
@@ -30,6 +31,7 @@ let stringData = [{
     Language: "en",
     HourSummary: "Time by delta",
     HourSummaryAll: "Overall time",
+    LeaveHour:"Leave at",
 	TitleHourSummary: "Delta",
 	TitleHourSummaryAll: "All",
     btnSwitch_Orginal: "Orginal data",
@@ -38,6 +40,11 @@ let stringData = [{
     HTML_HourElement: "Work time",
 },
 ];
+
+/**
+ * Const whitch disable debug information
+ */
+const isDebugModeActive = false;
 
 //--------------------------------------
 //--- Basic functions
@@ -104,38 +111,46 @@ let getLocationProperties = (handle) => {
 }
 
 /**
- * Return string in format HH:mm with prefix +/-
+ * Returns a time string in the format HH:mm with an optional +/- prefix.
  * 
- * @param {Number} minutes - amount of minutes
+ * @param {Number} minutes - The total number of minutes (can be negative).
+ * @param {Boolean} [removePrefix=false] - If true, removes the +/- prefix from the output.
+ * @returns {String} - A formatted string representing the time in HH:mm format, with an optional +/- prefix.
  */
-let getGetStringFromMinutes = (minutes) => {
-   
-    //todo improve this function
-    let retval = "";
-
-    if (minutes < 0) {
-        minutes = -1 * minutes;
-        retval += "-"
-    } else if (minutes > 0) {
-        retval += "+"
+const getStringFromMinutes = (minutes, removePrefix = false) => {
+    // Determine prefix if applicable
+    let prefix = "";
+    if (!removePrefix) {
+        if (minutes < 0) {
+            prefix = "-";
+            minutes = Math.abs(minutes); // Convert to positive
+        } else if (minutes > 0) {
+            prefix = "+";
+        }
     }
 
-    let hh = parseInt(minutes / 60);
-    let mm = minutes - (hh * 60);
+    // Calculate hours and minutes
+    const hh = Math.floor(minutes / 60);
+    const mm = minutes % 60;
 
-    if (hh < 10)
-        retval += "0";
+    // Format hours and minutes with leading zeros
+    const formattedTime = `${hh.toString().padStart(2, '0')}:${mm.toString().padStart(2, '0')}`;
 
-    retval += hh;
-    retval += ":";
-
-    if (mm < 10)
-        retval += "0";
-
-    retval += mm;
-
-    return retval;
+    return `${prefix}${formattedTime}`;
 }
+
+/**
+ * Adds a specified number of minutes to the current time and returns 
+ * the total number of minutes since midnight for the updated time.
+ * 
+ * @param {Number} minutesToAdd - The number of minutes to add to the current time.
+ * @returns {Number} - Total minutes since midnight for the updated time.
+ */
+let addMinutesToCurrentTime = (minutesToAdd) => {
+    let updatedTime = new Date(Date.now() + minutesToAdd * 60000);
+    let totalMinutes = updatedTime.getHours() * 60 + updatedTime.getMinutes();
+    return totalMinutes;
+};
 
 //--------------------------------------
 //--- Extract data functions
@@ -474,7 +489,7 @@ let CalculateTime = () => {
         day.EntriesList.forEach((record,index) => {
             
             let strEntry = "Day_" + day.DataString + "_" + index;
-            let displayData = record.value + ' = ' + getGetStringFromMinutes(record.ExitMinutes - record.EnterMinutes);
+            let displayData = record.value + ' = ' + getStringFromMinutes(record.ExitMinutes - record.EnterMinutes);
 
             if (document.getElementById(strEntry) == null) {
                 createElement(strEntry, record.Location, displayData);
@@ -529,11 +544,23 @@ let CalculateTime = () => {
     }
 
     //Update status bar with balance
-    let text = getStringValue().HourSummary + ": ( " + getGetStringFromMinutes(Balanse.Minutes) + " )  "+ getStringValue().HourSummaryAll +": "+ getGetStringFromMinutes(Balanse.AllMinutes);
-    document.getElementById("worktime_summary").innerHTML =  text + "  /  [ " + versionString + " ]";
-	let textTitle = getStringValue().TitleHourSummary + ":" + getGetStringFromMinutes(Balanse.Minutes) + " | "+ getStringValue().TitleHourSummaryAll +":"+ getGetStringFromMinutes(Balanse.AllMinutes);
+
+    let Balanse_exit = {
+        Minutes: addMinutesToCurrentTime(Balanse.Minutes * -1),
+        AllMinutes: addMinutesToCurrentTime(Balanse.AllMinutes * -1)
+    }
+
+    const str = getStringValue();
+    let text_minutes = `${str.HourSummary}: (${getStringFromMinutes(Balanse.Minutes)}) ${str.LeaveHour}: ${getStringFromMinutes(Balanse_exit.Minutes, true)}`;
+    let text_all_minutes = `${str.HourSummaryAll}: (${getStringFromMinutes(Balanse.AllMinutes)}) ${str.LeaveHour}: ${getStringFromMinutes(Balanse_exit.AllMinutes, true)}`;
+    document.getElementById("worktime_summary").innerHTML = `${text_minutes}   |   ${text_all_minutes}   |   ${versionString}`;
+	let textTitle = getStringValue().TitleHourSummary + ":" + getStringFromMinutes(Balanse.Minutes) + " | "+ getStringValue().TitleHourSummaryAll +":"+ getStringFromMinutes(Balanse.AllMinutes);
 	document.title = textTitle;
-    console.log(text);
+    
+    if (isDebugModeActive) {
+        console.log(text_minutes);
+        console.log(text_all_minutes);
+    }
 
     return Balanse;
 }
